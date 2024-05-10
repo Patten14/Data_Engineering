@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -14,10 +16,11 @@ var region string = "us-west-2"
 var bucketName string = "tf-dataengineering-patrick"
 
 func main() {
-	createS3(bucketName)
-	ListAllBuckets()
-	// deleteS3(bucketName)
+	// createS3(bucketName)
 	// ListAllBuckets()
+	// UploadFile(bucketName, "C:\\Users\\Patrick\\OneDrive - IU International University of Applied Sciences\\3. Semester\\Projekt Data Engineering\\daten.txt", "Testdaten")
+	deleteS3(bucketName)
+	ListAllBuckets()
 
 }
 
@@ -87,7 +90,26 @@ func ListAllBuckets() {
 	}
 }
 
-func UploadFile(bucketName string, input string) error {
+func UploadFile(bucketName string, filePath string, fileName string) error {
+	s3Client, err := GetS3Client()
+	if err != nil {
+		return err
+	}
 
-	return nil
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Printf("Couldn't open file %v to upload. Here's why: %v\n", filePath, err)
+	} else {
+		defer file.Close()
+		_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(fileName),
+			Body:   file,
+		})
+		if err != nil {
+			log.Printf("Couldn't upload file %v to %v:%v. Here's why: %v\n",
+				fileName, bucketName, fileName, err)
+		}
+	}
+	return err
 }
