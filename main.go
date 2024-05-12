@@ -16,11 +16,14 @@ var region string = "us-west-2"
 var bucketName string = "tf-dataengineering-patrick"
 
 func main() {
-	// createS3(bucketName)
-	// ListAllBuckets()
-	// UploadFile(bucketName, "C:\\Users\\Patrick\\OneDrive - IU International University of Applied Sciences\\3. Semester\\Projekt Data Engineering\\daten.txt", "Testdaten")
-	deleteS3(bucketName)
-	ListAllBuckets()
+	s3Client, err := GetS3Client()
+	if err != nil {
+		return
+	}
+
+	createS3(s3Client, bucketName)
+	UploadFile(s3Client, bucketName, "C:\\Users\\Patrick\\OneDrive - IU International University of Applied Sciences\\3. Semester\\Projekt Data Engineering\\daten.txt", "Testdaten")
+	deleteS3(s3Client, bucketName)
 
 }
 
@@ -34,13 +37,8 @@ func GetS3Client() (*s3.Client, error) {
 	return s3.NewFromConfig(sdkConfig), err
 }
 
-func deleteS3(bucketName string) error {
-	s3Client, err := GetS3Client()
-	if err != nil {
-		return err
-	}
-
-	_, err = s3Client.DeleteBucket(context.TODO(),
+func deleteS3(s3Client *s3.Client, bucketName string) error {
+	_, err := s3Client.DeleteBucket(context.TODO(),
 		&s3.DeleteBucketInput{Bucket: aws.String(bucketName)})
 	if err != nil {
 		fmt.Println(err)
@@ -50,13 +48,8 @@ func deleteS3(bucketName string) error {
 	return nil
 }
 
-func createS3(bucketName string) error {
-	s3Client, err := GetS3Client()
-	if err != nil {
-		return err
-	}
-
-	_, err = s3Client.CreateBucket(context.TODO(),
+func createS3(s3Client *s3.Client, bucketName string) error {
+	_, err := s3Client.CreateBucket(context.TODO(),
 		&s3.CreateBucketInput{Bucket: aws.String(bucketName),
 			CreateBucketConfiguration: &types.CreateBucketConfiguration{LocationConstraint: types.BucketLocationConstraint(region)},
 		})
@@ -69,12 +62,7 @@ func createS3(bucketName string) error {
 	return nil
 }
 
-func ListAllBuckets() {
-	s3Client, err := GetS3Client()
-	if err != nil {
-		return
-	}
-
+func ListAllBuckets(s3Client *s3.Client) {
 	fmt.Println("Let's list up all buckets for your account.")
 	result, err := s3Client.ListBuckets(context.TODO(), &s3.ListBucketsInput{})
 	if err != nil {
@@ -90,12 +78,7 @@ func ListAllBuckets() {
 	}
 }
 
-func UploadFile(bucketName string, filePath string, fileName string) error {
-	s3Client, err := GetS3Client()
-	if err != nil {
-		return err
-	}
-
+func UploadFile(s3Client *s3.Client, bucketName string, filePath string, fileName string) error {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Printf("Couldn't open file %v to upload. Here's why: %v\n", filePath, err)
@@ -112,4 +95,23 @@ func UploadFile(bucketName string, filePath string, fileName string) error {
 		}
 	}
 	return err
+}
+
+func ListAllFiles(s3Client *s3.Client, bucketName string) {
+	objectList, err := s3Client.ListObjectsV2(context.TODO(),
+		&s3.ListObjectsV2Input{Bucket: aws.String(bucketName)})
+
+	if err != nil {
+		fmt.Printf("Error reading objects from bucket %v: %v\n", bucketName, err)
+		return
+	}
+
+	for _, object := range objectList.Contents {
+		outputList, err := s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{Bucket: aws.String(bucketName), Key: object.Key})
+		if err != nil {
+			fmt.Printf("Error deleting object from bucket: %v\n", err)
+			return
+		}
+		fmt.Println("File", object.Key, "is deleted", outputList.DeleteMarker)
+	}
 }
