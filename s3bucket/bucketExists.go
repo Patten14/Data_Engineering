@@ -13,7 +13,7 @@ import (
 )
 
 func BucketExists() (bool, error) {
-	s3Client := GetS3Client()
+	s3Client := GetClient()
 	bucketName := viper.GetString("AWS_BUCKET_NAME")
 
 	_, err := s3Client.HeadBucket(context.TODO(), &s3.HeadBucketInput{

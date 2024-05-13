@@ -22,7 +22,7 @@ func CreateGlue() {
 }
 
 func WorkflowS3() {
-	s3Client := s3bucket.GetS3Client()
+	s3Client := s3bucket.GetClient()
 
 	s3bucket.CreateS3(s3Client)
 	s3bucket.UploadFile(s3Client, "C:\\Users\\Patrick\\OneDrive - IU International University of Applied Sciences\\3. Semester\\Projekt Data Engineering\\daten.txt", "Testdaten")

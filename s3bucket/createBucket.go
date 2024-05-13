@@ -24,10 +24,14 @@ func CreateS3(s3Client *s3.Client) error {
 		return errors.New("bucket exists")
 	}
 
-	_, err = s3Client.CreateBucket(context.TODO(),
-		&s3.CreateBucketInput{Bucket: aws.String(bucketName),
-			CreateBucketConfiguration: &types.CreateBucketConfiguration{LocationConstraint: types.BucketLocationConstraint(viper.GetString("AWS_REGION"))},
-		})
+	createBucketInput := &s3.CreateBucketInput{
+		Bucket: aws.String(bucketName),
+		CreateBucketConfiguration: &types.CreateBucketConfiguration{
+			LocationConstraint: types.BucketLocationConstraint(viper.GetString("AWS_REGION")),
+		},
+	}
+
+	_, err = s3Client.CreateBucket(context.TODO(), createBucketInput)
 	if err != nil {
 		log.Println(err)
 		return err

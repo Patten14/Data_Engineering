@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/aws/aws-sdk-go-v2 v1.26.1
 	github.com/aws/aws-sdk-go-v2/config v1.27.13
+	github.com/aws/aws-sdk-go-v2/service/glue v1.80.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.53.2
 	github.com/aws/smithy-go v1.20.2
 	github.com/spf13/viper v1.18.2
