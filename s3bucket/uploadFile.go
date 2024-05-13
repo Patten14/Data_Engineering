@@ -7,9 +7,11 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/spf13/viper"
 )
 
-func UploadFile(s3Client *s3.Client, bucketName string, filePath string, fileName string) error {
+func UploadFile(s3Client *s3.Client, filePath string, fileName string) error {
+	bucketName := viper.GetString("AWS_BUCKET_NAME")
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Printf("Couldn't open file %v to upload. Here's why: %v\n", filePath, err)

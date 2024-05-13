@@ -2,27 +2,43 @@ package s3bucket
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/spf13/viper"
 )
 
-func DeleteAllFiles(s3Client *s3.Client, bucketName string) {
+func DeleteAllFiles(s3Client *s3.Client) {
+	bucketName := viper.GetString("AWS_BUCKET_NAME")
+
+	exists, err := BucketExists()
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+
+	if !exists {
+		log.Panicf("Bucket do not exists.")
+		return
+	}
+
 	objectList, err := s3Client.ListObjectsV2(context.TODO(),
 		&s3.ListObjectsV2Input{Bucket: aws.String(bucketName)})
 
 	if err != nil {
-		fmt.Printf("Error reading objects from bucket %v: %v\n", bucketName, err)
+		log.Panicf("Error reading objects from bucket %v: %v", bucketName, err)
 		return
 	}
 
+	count := 0
 	for _, object := range objectList.Contents {
-		outputList, err := s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{Bucket: aws.String(bucketName), Key: object.Key})
+		_, err := s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{Bucket: aws.String(bucketName), Key: object.Key})
 		if err != nil {
-			fmt.Printf("Error deleting object from bucket: %v\n", err)
+			log.Panicf("Error deleting object from bucket: %v", err)
 			return
 		}
-		fmt.Println("File", object.Key, "is deleted", outputList.DeleteMarker)
+		count++
 	}
+	log.Default().Printf("Deleted %v file(s)", count)
 }
