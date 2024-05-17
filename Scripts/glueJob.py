@@ -12,22 +12,13 @@ spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args['JOB_NAME'], args)
 
-# Script generated for node Amazon S3
-AmazonS3_node1715374377686 = glueContext.create_dynamic_frame.from_options(format_options={"quoteChar": "\"", "withHeader": False, "separator": ";", "optimizePerformance": False}, connection_type="s3", format="csv", connection_options={"paths": ["s3://iu-test-keanu/data/ML_DATA.csv"], "recurse": True}, transformation_ctx="AmazonS3_node1715374377686")
+# Script generated for node AWS Glue Data Catalog
+AWSGlueDataCatalog_node1715961140345 = glueContext.create_dynamic_frame.from_catalog(database="iu-dataengineering-patrick-glue-database", table_name="data", transformation_ctx="AWSGlueDataCatalog_node1715961140345")
 
 # Script generated for node Drop Fields
-DropFields_node1715374387163 = DropFields.apply(frame=AmazonS3_node1715374377686, paths=["col2"], transformation_ctx="DropFields_node1715374387163")
+DropFields_node1715961142823 = DropFields.apply(frame=AWSGlueDataCatalog_node1715961140345, paths=["col2"], transformation_ctx="DropFields_node1715961142823")
 
 # Script generated for node Amazon S3
-AmazonS3_node1715374394703 = glueContext.write_dynamic_frame.from_options(
-    frame=DropFields_node1715374387163,
-    connection_type="s3",
-    connection_options={
-        "path": "s3://iu-test-keanu/result/",
-    },
-    format="csv",
-    #format_options={"writeHeader": True},  # Wenn du möchtest, dass die Headerzeile geschrieben wird
-    transformation_ctx="AmazonS3_node1715374394703"
-)
+AmazonS3_node1715961144750 = glueContext.write_dynamic_frame.from_options(frame=DropFields_node1715961142823, connection_type="s3", format="csv", connection_options={"path": "s3://iu-dataengineering-patrick/result/", "compression": "snappy", "partitionKeys": []}, transformation_ctx="AmazonS3_node1715961144750")
 
 job.commit()

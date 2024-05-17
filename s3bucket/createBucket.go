@@ -37,6 +37,6 @@ func CreateS3(s3Client *s3.Client) error {
 		return err
 	}
 
-	log.Default().Println("Created:", bucketName)
+	log.Default().Println("Bucket created:", bucketName)
 	return nil
 }

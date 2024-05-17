@@ -2,6 +2,7 @@ package glue
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -10,9 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func CreateDatabase() error {
-	glueClient := GetClient()
-
+func CreateDatabase(glueClient *glue.Client) error {
 	databaseName := viper.GetString("AWS_GLUE_DATABASE_NAME")
 
 	createDatabaseInput := &glue.CreateDatabaseInput{
@@ -23,9 +22,11 @@ func CreateDatabase() error {
 
 	_, err := glueClient.CreateDatabase(context.TODO(), createDatabaseInput)
 	if err != nil {
-		log.Panic("Failed to create Glue database")
-		log.Panic(err)
-		return err
+		var alreadyExistsError *types.AlreadyExistsException
+		if !errors.As(err, &alreadyExistsError) {
+			log.Println("Failed to create Glue database", err)
+			return err
+		}
 	}
 	log.Println("Created Glue database:", databaseName)
 	return nil
