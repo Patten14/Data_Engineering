@@ -1,0 +1,14 @@
+{
+    "fileLocations": [
+        {
+            "URIs":[
+                "s3://iu-dataengineering-patrick/result/run-1716017341731-part-r-00000"
+            ]
+        }
+    ],
+    "globalUploadSettings": {
+        "format": "CSV",
+        "delimiter": ",",
+        "containsHeader": "true"
+    }
+}

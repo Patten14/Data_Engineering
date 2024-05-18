@@ -19,6 +19,6 @@ AWSGlueDataCatalog_node1715961140345 = glueContext.create_dynamic_frame.from_cat
 DropFields_node1715961142823 = DropFields.apply(frame=AWSGlueDataCatalog_node1715961140345, paths=["col2"], transformation_ctx="DropFields_node1715961142823")
 
 # Script generated for node Amazon S3
-AmazonS3_node1715961144750 = glueContext.write_dynamic_frame.from_options(frame=DropFields_node1715961142823, connection_type="s3", format="csv", connection_options={"path": "s3://iu-dataengineering-patrick/result/", "compression": "snappy", "partitionKeys": []}, transformation_ctx="AmazonS3_node1715961144750")
+AmazonS3_node1715961144750 = glueContext.write_dynamic_frame.from_options(frame=DropFields_node1715961142823, connection_type="s3", format="csv", connection_options={"path": "s3://iu-dataengineering-patrick/result/"}, transformation_ctx="AmazonS3_node1715961144750")
 
 job.commit()

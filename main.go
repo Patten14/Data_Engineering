@@ -21,10 +21,6 @@ func main() {
 	InitViper()
 	WorkflowS3(s3Client)
 	CreateGlue(glueClient)
-	glue.StartJob(glueClient)
-
-	//glue.StartJob(glueClient)
-	// s3bucket.DeleteS3(s3Client, true)
 }
 
 func CreateGlue(glueClient *awsglue.Client) {
