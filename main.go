@@ -29,7 +29,7 @@ func CreateGlue(glueClient *awsglue.Client) {
 	if err != nil {
 		return
 	}
-	//err = glue.CreateCrawler(glueClient)
+	err = glue.CreateCrawler(glueClient)
 	if err != nil {
 		return
 	}
