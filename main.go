@@ -45,6 +45,6 @@ func CreateGlue(glueClient *awsglue.Client) {
 
 func WorkflowS3(s3Client *s3.Client) {
 	s3bucket.CreateS3(s3Client)
-	s3bucket.UploadFile(s3Client, "C:\\Users\\Patrick\\OneDrive - IU International University of Applied Sciences\\3. Semester\\Projekt Data Engineering\\data.csv", "data/Testdaten.csv")
+	s3bucket.UploadFile(s3Client, "D:\\Documents\\GitHub\\Data_Engineering\\Data\\data.csv", "data/Testdaten.csv")
 	s3bucket.UploadFile(s3Client, "D:\\Documents\\GitHub\\Data_Engineering\\Scripts\\glueJob.py", "scripts/glueJob.py")
 }
